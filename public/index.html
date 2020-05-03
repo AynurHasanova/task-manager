@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="taskManager">
+<head>
+	<!-- META -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+
+	<title>Node/Angular Task App</title>
+
+	<!-- SCROLLS -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<style>
+		html 					{ overflow-y:scroll; }
+		body 					{ padding-top:50px; }
+		#task-list 				{ margin-bottom:30px; }
+		#task-form 	 			{ margin-bottom:50px; }
+	</style>
+
+	<!-- SPELLS -->
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script><!-- load angular -->
+
+	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
+	<script src="js/services/tasks.js"></script> <!-- load our task service -->
+	<script src="js/core.js"></script> <!-- load our main application -->
+
+</head>
+
+<body ng-controller="mainController">
+
+<div>
+ 
+        <label>Title</label>
+        <input type="text" name="name" ng-model="formData.title"/>
+ 
+        <label>Details</label>
+        <input type="text" name="address" ng-model="formData.details"/>
+ 
+        <label>Due Date</label>
+        <input type="text" name="dueDate" ng-model="formData.dueDate"/>
+ 
+        <br/>
+ 
+        <input type="hidden" ng-model="task._id" />
+        <input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
+ 
+        <br />
+ 
+        <br />
+ 
+        <table border="1" bordercolor="blue">
+            <tr style="color:blue">
+                <th style="width:150px">ID</th> 
+                <th style="width:150px">Title</th>
+                <th style="width:150px">Details</th>
+				 <th style="width:150px">Due Date</th> 
+                <th>Action</th>
+            </tr>
+ 
+            <tr style="color:pink" ng-repeat="task in tasks">
+                <td>{{ task._id }}</td>
+                <td>{{ task.title }}</td>
+                <td>{{ task.details }}</td>
+				<td>{{ task.dueDate }}</td>
+ 
+                <td>
+                    <a href="#" ng-click="updateTask(task._id)">edit</a> | 
+                    <a href="#" ng-click="deleteTask(task._id)">delete</a>
+                </td>
+            </tr>
+
+        </table>
+ 
+    </div>
+ 
+</body>
+</html>
