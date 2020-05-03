@@ -20,7 +20,19 @@
 	</style>
 
 	<!-- SPELLS -->
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script><!-- load angular -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-touch.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-animate.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/lodash.min.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/jszip.min.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/excel-builder.dist.js"></script>
+    <script src="http://ui-grid.info/release/ui-grid.js"></script>
+    <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+    <link rel="stylesheet" href="main.css" type="text/css">
+
 
 	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
 	<script src="js/services/tasks.js"></script> <!-- load our task service -->
@@ -45,35 +57,10 @@
  
         <input type="hidden" ng-model="task._id" />
         <input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
- 
-        <br />
- 
-        <br />
- 
-        <table border="1" bordercolor="blue">
-            <tr style="color:blue">
-                <th style="width:150px">ID</th> 
-                <th style="width:150px">Title</th>
-                <th style="width:150px">Details</th>
-				 <th style="width:150px">Due Date</th> 
-                <th>Action</th>
-            </tr>
- 
-            <tr style="color:pink" ng-repeat="task in tasks">
-                <td>{{ task._id }}</td>
-                <td>{{ task.title }}</td>
-                <td>{{ task.details }}</td>
-				<td>{{ task.dueDate }}</td>
- 
-                <td>
-                    <a href="#" ng-click="updateTask(task._id)">edit</a> | 
-                    <a href="#" ng-click="deleteTask(task._id)">delete</a>
-                </td>
-            </tr>
-
-        </table>
- 
+  
     </div>
+
+	<div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav class="grid"></div>
  
 </body>
 </html>
