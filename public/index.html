@@ -42,16 +42,19 @@
 
 <body ng-controller="mainController">
 
-<div>
- 
-        <label>Title</label>
+	<div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav class="grid"></div>
+
+	<br/>
+
+    <div>
+        <label>Task Name</label>
         <input type="text" name="name" ng-model="formData.title"/>
  
-        <label>Details</label>
+        <label>Task Details</label>
         <input type="text" name="address" ng-model="formData.details"/>
  
         <label>Due Date</label>
-        <input type="text" name="dueDate" ng-model="formData.dueDate"/>
+		<input type="date" name="dueDate" ng-init="model=(myDate | date:'dd-MM-yyyy')" ng-model="formData.dueDate" />
  
         <br/>
  
@@ -59,8 +62,6 @@
         <input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
   
     </div>
-
-	<div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav class="grid"></div>
  
-</body>
+ </body>
 </html>

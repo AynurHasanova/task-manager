@@ -11,6 +11,7 @@ function getTasks(res) {
             res.send(err);
         }
 
+        console.log("Got tasks: " + tasks)
         // return all tasks in JSON format
         res.json(tasks);
     });
@@ -61,7 +62,8 @@ module.exports = function(app, passport) {
             var task = {
                 title: req.sanitize('title').escape().trim(),
                 details: req.sanitize('details').escape().trim(),
-                dueDate: req.sanitize('dueDate').escape().trim()
+                dueDate: req.sanitize('dueDate').escape().trim(),
+                done: req.body.done
             }
         
             db.Task.findByIdAndUpdate(req.params.task_id, task, function(err, task){
