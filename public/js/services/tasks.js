@@ -37,18 +37,18 @@ appService.factory('modal', ['$compile', '$rootScope', function ($compile, $root
 										</div>
 										<div>
 											<label>Task Name</label>
-											<input type="text" name="name" ng-model="row.title"/>
+											<input type="text" name="name" ng-model="formData.title"/>
 									
 											<label>Task Details</label>
-											<input type="text" name="address" ng-model="row.details"/>
+											<input type="text" name="address" ng-model="formData.details"/>
 									
 											<label>Due Date</label>
-											<input type="date" name="dueDate" ng-model="row.dueDate" date-format/>
+											<input type="date" name="dueDate" ng-model="formData.dueDate" date-format/>
 									
 											<br/>
 									
-											<input type="hidden" ng-model="taskData._id" />
-											<input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
+											<input type="hidden" ng-model="formData._id" />
+											<input type="button" value="Save" ng-click="editRow(); close()" class="btn btn-primary"/>
 								  
 										</div>
 										<div class="modal-footer">
