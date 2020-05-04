@@ -15,9 +15,8 @@ userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-let User = mongoose.model('User', userSchema);
+var User = mongoose.model('User', userSchema);
 
-module.exports = User;
 const LocalStrategy = require('passport-local').Strategy;
 
 module.exports = function(passport){
@@ -31,63 +30,31 @@ module.exports = function(passport){
         });
     });
 
-    passport.use('local-signup', new LocalStrategy({
-        usernameField : 'userName',
-        passwordField : 'password',
-        passReqToCallback : true
-    },
-    function(req, userName, password, done) {
-        process.nextTick(function() {
-        User.findOne({ 'userName' :  userName }, function(err, user) {
+    passport.use('local-login', new LocalStrategy(
+      function(username, password, done) {
+
+        User.findOne({
+          userName: username.toLowerCase()
+        }, function(err, user) {
+
+          // if there are any errors, return the error before anything else
             if (err)
                 return done(err);
 
-            if (user) {
-                console.log('This userName is already taken')
-                return done(null, false, req.flash('signupMessage', 'This userName is already taken'));
-            } else {
-                var newUser = new User();
-                newUser.userName = userName;
-                newUser.password = newUser.generateHash(password);
+            // if no user is found, return the message
+            if (!user)
+                return done(null, false);
 
-                // it saves the user
-                newUser.save(function(err) {
-                    if (err)
-                        throw err;
-                    return done(null, newUser);
-                });
-            }
-        });    
+            // if the user is found but the password is wrong
+            if (!user.validPassword(password))
+                return done(null, false); 
 
+            // all is well, return successful user
+            return done(null, user);
         });
-    }));
+      }
+    ));
 
-    passport.use(
-        "local-login",
-        new LocalStrategy(
-          {
-            usernameField: "userName",
-            passwordField: "password",
-            passReqToCallback: true,
-          },
-          function(req, userName, password, done) {
-            User.findOne({ userName: userName }, function(err, user) {
-              if (err) return done(err)
-              console.log("user", user)
-              console.log("password", password)
-
-              if (!user)
-                return done(null, false, req.flash("loginMessage", "User not found"))
-
-              if (!user.validPassword(password))
-                return done(
-                  null,
-                  false,
-                  req.flash("loginMessage", "Wrong password")
-                )
-              return done(null, user)
-            })
-          }
-        )
-      )
 }
+
+module.exports.User = User;

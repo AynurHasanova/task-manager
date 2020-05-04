@@ -1,17 +1,17 @@
 
-var app = angular.module('taskController', ['ngTouch', 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
+var app = angular.module('taskController', ['ngTouch', 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ngRoute']);
 
 // a custom date fromatter directive
 app.directive('dateFormat', function() {
-	return {
-	  require: 'ngModel',
-	  link: function(scope, element, attr, ngModelCtrl) {
-		//Reset default angular formatters/parsers
-		ngModelCtrl.$formatters.length = 0;
-		ngModelCtrl.$parsers.length = 0;
-	  }
-	};
-  });
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attr, ngModelCtrl) {
+            //Reset default angular formatters/parsers
+            ngModelCtrl.$formatters.length = 0;
+            ngModelCtrl.$parsers.length = 0;
+        }
+    };
+});
 
 // the main application controller
 app.controller('mainController', 
@@ -29,11 +29,13 @@ app.controller('mainController',
 							name: 'title', 
 							displayName: 'Name',
 							cellEditableCondition: false,
+							enableColumnResizing: true
 						},
 						{ 
 							name: 'details', 
 							displayName: 'Details',
 							cellEditableCondition: false,
+							enableColumnResizing: true
 						},
 						{ 
 							name: 'dueDate', 
@@ -41,26 +43,30 @@ app.controller('mainController',
 							type: 'date', 
 							cellFilter: 'date:"dd-MM-yyyy"',
 							cellEditableCondition: false,
+							enableColumnResizing: false
 						},
 						{ 
 							name: 'done', 
 							displayName: 'Done', 
 							type: 'boolean',
 							cellEditableCondition: true,
+							enableColumnResizing: false
 						},
 						{ 
 							name: 'Delete', 
 							cellTemplate: '<button class="btn primary" ng-click="grid.appScope.deleteRow(row)">Delete</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
-							enableSorting: false
+							enableSorting: false,
+							enableColumnResizing: false
 						},
 						{ 
 							name: 'Edit', 
 							cellTemplate: '<button class="btn primary" ng-click="grid.appScope.showModal(row)">Edit</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
-							enableSorting: false
+							enableSorting: false,
+							enableColumnResizing: false
 						}
 					],
 					showFooter: true,
@@ -218,3 +224,54 @@ app.controller('mainController',
 		}
 	]
 );
+
+
+app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
+    $scope.logout = function() {
+      $http.post("/logout")
+        .then(
+			function() {
+				$rootScope.currentUser = null;
+				$location.url("/home");
+			},
+			function (error){
+				console.log(error, 'Cannot logout');
+			}
+		);
+    }
+  });
+  
+  app.controller("SignUpCtrl", function($scope, $http, $rootScope, $location) {
+    $scope.signup = function(user) {
+
+      // TODO: verify passwords are the same and notify user
+      if (user.password == user.password2) {
+        $http.post('/signup', user)
+          .then(
+			  function(user) {
+				$rootScope.currentUser = user;
+				$location.url("/profile");
+			  },
+			  function (error){
+				console.log(error, 'Cannot signup');
+			  }				
+		  );
+      }
+    }
+  });
+  
+  app.controller("LoginCtrl", function($location, $scope, $http, $rootScope) {
+    $scope.login = function(user) {
+
+      $http.post('/login', user)
+        .then(
+			function(response) {
+				$rootScope.currentUser = response;
+				$location.url("/profile");
+			},
+			function (error) {
+				console.log(error, 'Cannot login');
+			}				
+		);
+    }
+});

@@ -1,0 +1,23 @@
+<div ng-controller="mainController">
+	<div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>
+
+	<br/>
+
+    <div>
+        <label>Task Name</label>
+        <input type="text" name="name" ng-model="formData.title"/>
+ 
+        <label>Task Details</label>
+        <input type="text" name="address" ng-model="formData.details"/>
+ 
+        <label>Due Date</label>
+		<input type="date" name="dueDate" ng-init="model=(myDate | date:'dd-MM-yyyy')" ng-model="formData.dueDate" />
+ 
+        <br/>
+ 
+        <input type="hidden" ng-model="task._id" />
+        <input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
+  
+    </div>
+
+ </div>

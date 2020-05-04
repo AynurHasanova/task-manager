@@ -21,6 +21,7 @@
 
 	<!-- SPELLS -->
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-route.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-touch.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-animate.js"></script>
     <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
@@ -35,33 +36,29 @@
 
 
 	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
+    <script src="js/app.config.js"></script>
 	<script src="js/services/tasks.js"></script> <!-- load our task service -->
 	<script src="js/core.js"></script> <!-- load our main application -->
 
+
 </head>
 
-<body ng-controller="mainController">
+<body >
 
-	<div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav class="grid"></div>
+	<nav ng-controller="NavCtrl">
+		<a href="#!home">Home</a>
+		<span ng-show="!currentUser">
+			<a href="#!login">Login</a>
+			<a href="#!signup">Sign Up</a>
+		</span>
+		<span ng-show="currentUser">
+			<a href="#!profile">Profile</a>
+			<a href="#!logout" ng-click="logout()">Logout</a>
+		</span>
+	</nav>
+	
+	<div ng-view></div>
 
-	<br/>
-
-    <div>
-        <label>Task Name</label>
-        <input type="text" name="name" ng-model="formData.title"/>
- 
-        <label>Task Details</label>
-        <input type="text" name="address" ng-model="formData.details"/>
- 
-        <label>Due Date</label>
-		<input type="date" name="dueDate" ng-init="model=(myDate | date:'dd-MM-yyyy')" ng-model="formData.dueDate" />
- 
-        <br/>
- 
-        <input type="hidden" ng-model="task._id" />
-        <input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
-  
-    </div>
- 
  </body>
+
 </html>

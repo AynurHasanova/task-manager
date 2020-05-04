@@ -8,33 +8,14 @@ var expressValidator = require('express-validator')
 var passport = require('passport');
 var flash = require('connect-flash');
 
-var methodOverride = require('method-override');
-
 var app = express();
-
-var customHBS = hbs.create({
-    defaultLayout: 'main',
-    layoutsDir: __dirname + '/views/layouts/',
-    partialsDir: [
-        __dirname + '/views/partials/'
-    ]
-});
-
-// Set up handlebars templating
-app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', customHBS.engine);
-app.set('view engine','handlebars');
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(expressValidator())
-app.use(express.static(path.join(__dirname, 'public')));
-
-// override with the X-HTTP-Method-Override header in the request
-// app.use(methodOverride('X-HTTP-Method-Override')); 
-
+app.use(express.static(path.join(__dirname, 'app')));
 
 // Set up the session middleware
 app.use(session({
