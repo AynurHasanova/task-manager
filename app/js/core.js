@@ -1,1 +1,1 @@
-var app = angular.module('taskManager', ['taskController', 'taskService']);
+var app = angular.module('taskManager', ['taskController', 'taskService', 'userService']);

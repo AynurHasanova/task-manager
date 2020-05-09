@@ -16,7 +16,38 @@ function getTasks(res) {
     });
 };
 
+
+function getUsers(res) {
+    passportDB.User.find(function (err, users) {
+
+        if (err) {
+            // return error
+            console.log("Sending error: " + err)
+            res.send(err);
+        }
+
+        console.log("Got users: " + users)
+        // return all users in JSON format
+        res.json(users);
+    });
+};
+
+
+
+const addUserToTasks = function(taskID, user) {
+    return db.Task.findByIdAndUpdate(
+      taskID,
+      { $push: { users: user._id } },
+      { new: true, useFindAndModify: false }
+    );
+  };
+
 module.exports = function(app, passport) {
+
+    app.get('/api/users', function (req, res) {
+        // get all users from the database
+        getUsers(res);
+    });
 
     app.get('/api/tasks', function (req, res) {
         // get all tasks from the database
@@ -33,7 +64,7 @@ module.exports = function(app, passport) {
             title: req.body.title,
             details: req.body.details,
             dueDate: req.body.dueDate,
-            done: false
+            done: false,
         }, function (err, task) {
             if (err)
                 res.send(err);

@@ -17,6 +17,10 @@ app.config(function($routeProvider) {
             logincheck: checkLoggedin
         }
     }).
+    when('/edit', { // TODO - bunu davam ele gorek
+        templateUrl: 'views/edit.html',
+        controller: 'SignUpCtrl'
+    }).    
     otherwise({
         redirectTo: '/home'
     });

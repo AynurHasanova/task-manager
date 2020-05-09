@@ -1,5 +1,5 @@
 
-var app = angular.module('taskController', ['ngTouch', 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ngRoute']);
+var app = angular.module('taskController', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ngRoute']);
 
 // a custom date fromatter directive
 app.directive('dateFormat', function() {
@@ -16,14 +16,14 @@ app.directive('dateFormat', function() {
 // the main application controller
 app.controller('mainController', 
 	[
-		'$rootScope', '$scope', '$http', 'modal', '$q', 'Tasks',  
-		function($rootScope, $scope, $http, modal, $q, Tasks) {
+		'$rootScope', '$scope', '$http', 'modal', '$q', 'Tasks', 'Users',  
+		function($rootScope, $scope, $http, modal, $q, Tasks, Users) {
 			$scope.formData = {};
 			$scope.loading = true;
 			$scope.myDate = new Date('08-03-2020T00:00:00');
 		
-			$scope.gridOptions = {
-			
+			$scope.gridOptionsTasks = {
+				    headerTemplate: 'tasks-grid-header-template.html',
 					columnDefs: [
 						{ 
 							name: 'title', 
@@ -76,14 +76,87 @@ app.controller('mainController',
 					enableRowSelection: true, 
 					enableSelectAll: false,
 					enableRowHeaderSelection: false,  
-					enableGridMenu: true,
 					noUnselect: true,
 
 					onRegisterApi: function(gridApi){
 						$scope.gridApi = gridApi;
 						gridApi.rowEdit.on.saveRow($scope, $scope.editRow);
+						gridApi.selection.on.rowSelectionChanged($scope,function(row){
+							var msg = 'Tasks row selected ' + row.isSelected;
+							console.log(msg);
+						});
 					}
 			};
+
+			$scope.gridOptionsUsers = {	
+				headerTemplate: 'users-grid-header-template.html',
+				columnDefs: [
+					{ 
+						name: 'userName',
+						displayName: 'User Name',
+						cellEditableCondition: false,
+						enableColumnResizing: true
+					},
+					{ 
+						name: 'created',
+						displayName: 'Registered',
+						cellEditableCondition: false,
+						enableColumnResizing: true
+					}
+				],
+				showFooter: true,
+				multiSelect: false,
+				enableSorting: true,
+				enableFiltering: true,
+				enableRowSelection: true,
+				enableSelectAll: true,
+				enableRowHeaderSelection: true,
+
+				onRegisterApi: function(gridApi){
+					//set gridApi on scope
+					$scope.gridApi = gridApi;
+					gridApi.selection.on.rowSelectionChanged($scope,function(row){
+					  var msg = 'Users row selected ' + row.isSelected;
+					  console.log(msg);
+					});
+				},
+			};
+
+			// GET =====================================================================
+			// when landing on the page, get all users and show them
+			// use the service to get all the users
+			Users.get()
+				.then(
+					function(response) {
+						$scope.users = response.data;
+						$scope.loading = false;
+						$scope.gridOptionsUsers.data = response.data;
+						console.log("Got user data: " + JSON.stringify(response.data, null, 4));
+					},
+					function (error){
+						console.log(error, 'Cannot user get data');
+					}
+				);
+
+			$scope.addUserToTask = function(task, user) {
+				var returnvalue = confirm("Are you sure to add user " + user.userName + " to task " + task.title);
+				if (returnvalue == true) {
+					Tasks.delete(row.entity._id)
+						.then(
+							function(response) {
+								$scope.tasks = response.data;
+							},
+							function (error){
+								console.log(error, 'Cannot delete task');
+							}
+						);
+
+					var index = $scope.gridOptionsTasks.data.indexOf(row.entity);
+					$scope.gridOptionsTasks.data.splice(index, 1);
+				}
+			};
+
+
 
 			// GET =====================================================================
 			// when landing on the page, get all tasks and show them
@@ -93,8 +166,8 @@ app.controller('mainController',
 					function(response) {
 						$scope.tasks = response.data;
 						$scope.loading = false;
-						$scope.gridOptions.data = response.data;
-						console.log("Got data: " + JSON.stringify(response.data, null, 4));
+						$scope.gridOptionsTasks.data = response.data;
+						console.log("Got task data: " + JSON.stringify(response.data, null, 4));
 					},
 					function (error){
 						console.log(error, 'Cannot get data');
@@ -115,8 +188,8 @@ app.controller('mainController',
 						// if successful creation, call our get function to get all the new tasks
 						.then(
 							function(response) {
-								var n = $scope.gridOptions.data.length + 1;
-								$scope.gridOptions.data.push({
+								var n = $scope.gridOptionsTasks.data.length + 1;
+								$scope.gridOptionsTasks.data.push({
 									"title": $scope.formData.title,
 									"details": $scope.formData.details,
 									"dueDate": new Date($scope.formData.dueDate),
@@ -146,8 +219,8 @@ app.controller('mainController',
 							}
 						);
 
-					var index = $scope.gridOptions.data.indexOf(row.entity);
-					$scope.gridOptions.data.splice(index, 1);
+					var index = $scope.gridOptionsTasks.data.indexOf(row.entity);
+					$scope.gridOptionsTasks.data.splice(index, 1);
 				}
 			};		
 

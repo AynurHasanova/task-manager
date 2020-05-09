@@ -4,6 +4,13 @@ const mongoose = require('mongoose');
 let userSchema = new mongoose.Schema({
     userName : String,
     password : String,
+    created: {type:Date, default: Date.now},
+    tasks: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Task"
+        }
+      ]
 });
 
 userSchema.methods.generateHash = function(password) {

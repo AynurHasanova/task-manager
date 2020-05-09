@@ -19,8 +19,14 @@ var taskSchema = new mongoose.Schema({
     details: {type: String, trim: true},
     dueDate: Date,
     priority: {type: String, trim: true, default: "low"},
-    created: {type:Date, default:Date.now},
-    done: Boolean
+    created: {type:Date, default: Date.now},
+    done: Boolean,
+    users: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User"
+        }
+    ]
 });
 
 var Task = mongoose.model("Task", taskSchema);

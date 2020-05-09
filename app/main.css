@@ -1,4 +1,24 @@
 .grid {
-    width: 800px;
-    height: 250px;
-  }  
+    width: 100%;
+    height: 200px;
+    padding-left: 25px;
+}
+
+.signup {
+  width: 1000px;
+  height: 250px;
+  padding-left: 25px;
+}
+
+.grid .ui-grid-header-cell {
+    height: 60px;
+}
+
+.grid  .ui-grid-header-cell {
+  height: 60px;
+}
+
+
+body { 
+  padding-top:50px; 
+}
