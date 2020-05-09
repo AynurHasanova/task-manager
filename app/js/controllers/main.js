@@ -75,14 +75,15 @@ app.controller('mainController',
 					enableFiltering: true,     
 					enableRowSelection: true, 
 					enableSelectAll: false,
-					enableRowHeaderSelection: false,  
+					enableRowHeaderSelection: true,  
 					noUnselect: true,
 
 					onRegisterApi: function(gridApi){
 						$scope.gridApi = gridApi;
 						gridApi.rowEdit.on.saveRow($scope, $scope.editRow);
 						gridApi.selection.on.rowSelectionChanged($scope,function(row){
-							var msg = 'Tasks row selected ' + row.isSelected;
+							var msg = 'Tasks row selected ' + row.isSelected + " with id " + row.entity._id;
+							$scope.task = row.entity;
 							console.log(msg);
 						});
 					}
@@ -116,7 +117,8 @@ app.controller('mainController',
 					//set gridApi on scope
 					$scope.gridApi = gridApi;
 					gridApi.selection.on.rowSelectionChanged($scope,function(row){
-					  var msg = 'Users row selected ' + row.isSelected;
+					  var msg = 'Users row selected ' + row.isSelected + " with id " + row.entity._id;
+					  $scope.user_id = row.entity._id;
 					  console.log(msg);
 					});
 				},
@@ -138,25 +140,21 @@ app.controller('mainController',
 					}
 				);
 
-			$scope.addUserToTask = function(task, user) {
-				var returnvalue = confirm("Are you sure to add user " + user.userName + " to task " + task.title);
+			$scope.addUserToTask = function() {
+				var userId = $scope.user_id;
+				var returnvalue = confirm("Are you sure to add user " + userId + " to task " + $scope.task._id);
 				if (returnvalue == true) {
-					Tasks.delete(row.entity._id)
+					Tasks.addUser(userId, $scope.task)
 						.then(
 							function(response) {
-								$scope.tasks = response.data;
+								console.log(error, 'Assigned a task to the user');
 							},
 							function (error){
-								console.log(error, 'Cannot delete task');
+								console.log(error, 'Cannot assign a task to the user task');
 							}
 						);
-
-					var index = $scope.gridOptionsTasks.data.indexOf(row.entity);
-					$scope.gridOptionsTasks.data.splice(index, 1);
 				}
 			};
-
-
 
 			// GET =====================================================================
 			// when landing on the page, get all tasks and show them

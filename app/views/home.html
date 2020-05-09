@@ -1,7 +1,7 @@
 <div ng-controller="mainController">
     <div class="row">
         <div class="span4">
-	        <div ui-grid="gridOptionsTasks" ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>
+	        <div ui-grid="gridOptionsTasks"  ui-grid-selection ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>
         </div>
         
         <div class="span4">
@@ -24,7 +24,10 @@
         <br/>
  
         <input type="hidden" ng-model="task._id" />
-        <input type="button" value="Save" ng-click="createTask()" class="btn btn-primary"/>
+        <input type="button" value="Create Task" ng-click="createTask()" class="btn btn-primary"/>
+
+        <input type="hidden" ng-model="task._id" />
+        <input type="button" value="Assign a Task to a User" ng-click="addUserToTask()" class="btn btn-primary"/>
 
         <a href="#!edit">Edit</a>
   

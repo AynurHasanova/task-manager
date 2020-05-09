@@ -34,12 +34,18 @@ function getUsers(res) {
 
 
 
-const addUserToTasks = function(taskID, user) {
+const addUserToTasks = function(userID, taskID, res) {
     return db.Task.findByIdAndUpdate(
       taskID,
-      { $push: { users: user._id } },
-      { new: true, useFindAndModify: false }
-    );
+      { $push: { users: userID } },
+      { new: true, useFindAndModify: false }, 
+      function(err){    
+        if (err){
+            console.log("Error assigning user: "  + err);
+        } else{
+            console.log("Assigned task to a suer ");
+        }
+     })
   };
 
 module.exports = function(app, passport) {
@@ -53,6 +59,13 @@ module.exports = function(app, passport) {
         // get all tasks from the database
         getTasks(res);
     });
+
+    // assign a task to a user
+    app.post('/api/tasks/users/:user_id', function (req, res) {
+        console.log("User assignment received, user_id: " 
+        + req.params.user_id + ", task_id: " + req.body._id);
+        addUserToTasks(req.params.user_id, req.body._id, res);
+    });    
 
     // create a task and return all tasks after creation
     app.post('/api/tasks', function (req, res) {

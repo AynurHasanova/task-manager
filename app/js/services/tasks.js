@@ -15,6 +15,10 @@ appService.factory('Tasks', ['$http',function($http) {
 				console.log(JSON.stringify(taskData, null, 4));
 				return $http.post('/api/tasks/' + id, taskData);
 			},
+			addUser : function(id, taskData) {
+				console.log("Got user id: " + id + " and task id: " + taskData._id);
+				return $http.post('/api/tasks/users/' + id, taskData);
+			},
 			delete : function(id) {
 				return $http.delete('/api/tasks/' + id);
 			}
