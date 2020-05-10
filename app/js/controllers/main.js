@@ -16,8 +16,8 @@ app.directive('dateFormat', function() {
 // the main application controller
 app.controller('mainController', 
 	[
-		'$rootScope', '$scope', '$http', 'modal', '$q', 'Tasks', 'Users',  
-		function($rootScope, $scope, $http, modal, $q, Tasks, Users) {
+		'$rootScope', '$scope', '$http', '$location', 'modal', '$q', 'Tasks', 'Users',  
+		function($rootScope, $scope, $http, $location, modal, $q, Tasks, Users) {
 			$scope.formData = {};
 			$scope.loading = true;
 			$scope.myDate = new Date('08-03-2020T00:00:00');
@@ -53,7 +53,7 @@ app.controller('mainController',
 						},
 						{ 
 							name: 'Delete', 
-							cellTemplate: '<button class="btn primary" ng-click="grid.appScope.deleteRow(row)">Delete</button>',
+							cellTemplate: '<button class="btn btn-danger" ng-click="grid.appScope.deleteRow(row)">Delete</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
 							enableSorting: false,
@@ -61,7 +61,7 @@ app.controller('mainController',
 						},
 						{ 
 							name: 'Edit', 
-							cellTemplate: '<button class="btn primary" ng-click="grid.appScope.showModal(row)">Edit</button>',
+							cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.showModal(row)">Edit</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
 							enableSorting: false,
@@ -76,6 +76,7 @@ app.controller('mainController',
 					enableSelectAll: false,
 					enableRowHeaderSelection: true,  
 					noUnselect: true,
+					rowHeight: 37,
 
 					onRegisterApi: function(gridApi){
 						$scope.gridApi = gridApi;
@@ -110,7 +111,7 @@ app.controller('mainController',
 				enableRowSelection: true,
 				enableSelectAll: true,
 				enableRowHeaderSelection: true,
-
+                rowHeight: 37,
 				onRegisterApi: function(gridApi){
 					//set gridApi on scope
 					$scope.gridApi = gridApi;
@@ -235,6 +236,7 @@ app.controller('mainController',
 							$scope.loading = false;
 							$scope.formData = {}; // clear the form so our user is ready to enter another
 							$scope.tasks = response.data; // assign our new list of tasks
+							$location.url("/home");
 						},
 						function (error){
 							console.log(error, 'Cannot update task');
@@ -298,54 +300,3 @@ app.controller('mainController',
 		}
 	]
 );
-
-
-app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
-    $scope.logout = function() {
-      $http.post("/logout")
-        .then(
-			function() {
-				$rootScope.currentUser = null;
-				$location.url("/home");
-			},
-			function (error){
-				console.log(error, 'Cannot logout');
-			}
-		);
-    }
-  });
-  
-  app.controller("SignUpCtrl", function($scope, $http, $rootScope, $location) {
-    $scope.signup = function(user) {
-
-      // TODO: verify passwords are the same and notify user
-      if (user.password == user.password2) {
-        $http.post('/signup', user)
-          .then(
-			  function(user) {
-				$rootScope.currentUser = user;
-				$location.url("/profile");
-			  },
-			  function (error){
-				console.log(error, 'Cannot signup');
-			  }				
-		  );
-      }
-    }
-  });
-  
-  app.controller("LoginCtrl", function($location, $scope, $http, $rootScope) {
-    $scope.login = function(user) {
-
-      $http.post('/login', user)
-        .then(
-			function(response) {
-				$rootScope.currentUser = response;
-				$location.url("/home");
-			},
-			function (error) {
-				console.log(error, 'Cannot login');
-			}				
-		);
-    }
-});

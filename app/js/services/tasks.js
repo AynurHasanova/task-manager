@@ -6,17 +6,12 @@ appService.factory('Tasks', ['$http',function($http) {
 				return $http.get('/api/tasks');
 			},
 			create : function(taskData) {
-				console.log("Got taskData: " + taskData)
-				console.log(JSON.stringify(taskData, null, 4));
 				return $http.post('/api/tasks', taskData);
 			},
 			update : function(id, taskData) {
-				console.log("Got taskData: " + taskData)
-				console.log(JSON.stringify(taskData, null, 4));
 				return $http.post('/api/tasks/' + id, taskData);
 			},
 			addUser : function(id, taskData) {
-				console.log("Got user id: " + id + " and task id: " + taskData._id);
 				return $http.post('/api/tasks/users/' + id, taskData);
 			},
 			delete : function(id) {

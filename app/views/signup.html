@@ -1,35 +1,21 @@
-<div class="ui middle aligned center aligned grid container">
-
-	<div class="row">
-		<div class="span4">
-			<h3 class="ui teal image header">
-				<div class="content">
-				Singup
-				</div>
-			</h3>
-		</div>
-
-		<div class="span4">
-			<div class="form-group input-group">
-				<div class="ui left icon input">
-					<i class="lock icon"></i>
-					<input ng-model="user.username" placeholder="User Name"/>
-				</div>
-			</div>
-			<div class="form-group input-group">
-				<div class="ui left icon input">
-					<i class="lock icon"></i>
-					<input ng-model="user.password" type="password" placeholder="Password"/>
-				</div>
-			</div>
-			<div class="form-group input-group">
-				<div class="ui left icon input">
-					<i class="lock icon"></i>
-					<input ng-model="user.password2" type="password" placeholder="Repeat password"/>
-				</div>
-			</div>
-			<button class="btn btn-success" ng-click="signup(user)">Sign Up</button>
-		</div>
-	</div>
-
+<div class="container">
+  <h2>Signup</h2>
+  <p>Please signup with your user name and password below</p>
+  <form>
+    <div class="form-group">
+      <label for="usr">Name:</label>
+      <input ng-model="user.username" placeholder="User Name" class="form-control" id="usr" />
+    </div>
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input ng-model="user.password" type="password" placeholder="Password" class="form-control" id="pwd"/>
+    </div>
+    <div class="form-group">
+      <label for="pwd2">Repeat Password:</label>
+      <input ng-model="user.password2" type="password" placeholder="Repeat password" class="form-control" id="pwd2"/>
+    </div>	
+    <div class="form-group">
+		<button class="btn btn-success" ng-click="signup(user)">Sign Up</button>
+    </div>
+  </form>
 </div>
