@@ -16,8 +16,8 @@ app.directive('dateFormat', function() {
 // the main application controller
 app.controller('mainController', 
 	[
-		'$rootScope', '$scope', '$http', '$location', 'modal', '$q', 'Tasks', 'Users',  
-		function($rootScope, $scope, $http, $location, modal, $q, Tasks, Users) {
+		'$rootScope', '$scope', '$http', '$location', 'editModal', 'detailsModal', 'userTasksModal', '$q', 'Tasks', 'Users',  
+		function($rootScope, $scope, $http, $location, editModal, detailsModal, userTasksModal, $q, Tasks, Users) {
 			$scope.formData = {};
 			$scope.loading = true;
 			$scope.myDate = new Date('08-03-2020T00:00:00');
@@ -27,12 +27,6 @@ app.controller('mainController',
 						{ 
 							name: 'title', 
 							displayName: 'Task Name',
-							cellEditableCondition: false,
-							enableColumnResizing: true
-						},
-						{ 
-							name: 'details', 
-							displayName: 'Task Details',
 							cellEditableCondition: false,
 							enableColumnResizing: true
 						},
@@ -52,6 +46,14 @@ app.controller('mainController',
 							enableColumnResizing: false
 						},
 						{ 
+							name: 'Details', 
+							cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.showDetailsModal(row)">Details</button>',
+							cellEditableCondition: false,
+							enableFiltering: false,
+							enableSorting: false,
+							enableColumnResizing: false
+						},
+						{ 
 							name: 'Delete', 
 							cellTemplate: '<button class="btn btn-danger" ng-click="grid.appScope.deleteRow(row)">Delete</button>',
 							cellEditableCondition: false,
@@ -61,7 +63,7 @@ app.controller('mainController',
 						},
 						{ 
 							name: 'Edit', 
-							cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.showModal(row)">Edit</button>',
+							cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.showEditModal(row)">Edit</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
 							enableSorting: false,
@@ -89,6 +91,41 @@ app.controller('mainController',
 					}
 			};
 
+			$rootScope.gridOptionsUserTasks = {
+				columnDefs: [
+					{ 
+						name: 'title', 
+						displayName: 'Task Name',
+						cellEditableCondition: false,
+						enableColumnResizing: true
+					},
+					{ 
+						name: 'dueDate', 
+						displayName: 'Due Date', 
+						type: 'date', 
+						cellFilter: 'date:"dd-MM-yyyy"',
+						cellEditableCondition: false,
+						enableColumnResizing: false
+					},
+					{ 
+						name: 'done', 
+						displayName: 'Done', 
+						type: 'boolean',
+						cellEditableCondition: false,
+						enableColumnResizing: false
+					}
+				],
+				showFooter: true,
+				enableSorting: true,
+				multiSelect: false,
+				enableFiltering: true,     
+				enableRowSelection: true, 
+				enableSelectAll: false,
+				enableRowHeaderSelection: true,  
+				noUnselect: true,
+				rowHeight: 37
+			};	
+
 			$scope.gridOptionsUsers = {	
 				columnDefs: [
 					{ 
@@ -110,7 +147,15 @@ app.controller('mainController',
 						enableFiltering: false,
 						enableSorting: false,
 						enableColumnResizing: false
-					}
+					},
+					{ 
+						name: 'Show Tasks', 
+						cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.getUserTasks(row); grid.appScope.showUserTasksModal()">Show Tasks</button>',
+						cellEditableCondition: false,
+						enableFiltering: false,
+						enableSorting: false,
+						enableColumnResizing: false
+					},
 				],
 				showFooter: true,
 				multiSelect: false,
@@ -147,18 +192,18 @@ app.controller('mainController',
 				);
 
 			$scope.addUserToTask = function(row) {
-				var userId = row.entity._id;
+				var userID = row.entity._id;
 				var userName = row.entity.userName;
-				console.log("Userid: " + userId);
+				console.log("userID: " + userID);
 				// if a userID, task, or taskID is null we cannot do anything
-                if (userId == null || $scope.task == null || ( $scope.task != null && $scope.task._id == null) ) {
+                if (userID == null || $scope.task == null || ( $scope.task != null && $scope.task._id == null) ) {
 					alert('Please select a task from the task table for user "' + userName + '"');
 					return;
 				} 
 			
 				var returnvalue = confirm('Are you sure to add user "' + userName + '" to task  "' + $scope.task.title + '"');
 				if (returnvalue == true) {
-					Tasks.addUser(userId, $scope.task)
+					Tasks.addUser(userID, $scope.task)
 						.then(
 							function(response) {
 								console.log(error, 'Assigned user "' + userName + '" to task "' + $scope.task  + '"');
@@ -185,6 +230,23 @@ app.controller('mainController',
 						console.log(error, 'Cannot get data');
 					}
 				);
+
+			$scope.getUserTasks = function(row) {
+				var userID = row.entity._id;
+				var userName = row.entity.userName;
+				console.log("userID: " + userID);
+				console.log("userName: " + userName);
+				Tasks.findByUser(userID)
+					.then(
+						function(response) {
+							console.log("Got task data: " + JSON.stringify(response.data, null, 4));
+							$rootScope.gridOptionsUserTasks.data = response.data;
+						},
+						function (error){
+							console.log(error, 'Failed to get tasks by user id "' + userID + '"');
+						}
+					);
+			};	
 
 			// CREATE ==================================================================
 			// when submitting the add form, send the text to the node API
@@ -281,8 +343,8 @@ app.controller('mainController',
 			};
 
 			// A modal view for editing a task on a new pop-up window
-			var myModal = new modal();
-			$scope.showModal = function(row) {
+			var editModal = new editModal();
+			$scope.showEditModal = function(row) {
 				console.log("Row entity: " + JSON.stringify(row.entity , null, 4));
 
 				$rootScope.formData = row.entity;
@@ -305,8 +367,25 @@ app.controller('mainController',
 							);
 					}
 				};
-				myModal.open(row.entity);
+				editModal.open(row.entity);
 			};
+
+			// A modal view for viewing a task details on a new pop-up window
+			var detailsModal = new detailsModal();
+			$scope.showDetailsModal = function(row) {
+				console.log("Row entity: " + JSON.stringify(row.entity , null, 4));
+				$rootScope.formData = row.entity;
+				$rootScope.row = row.entity
+				detailsModal.open(row.entity);
+			};
+
+
+			// A modal view for viewing user's tasks on a new pop-up window
+			var userTasksModal = new userTasksModal();
+			$scope.showUserTasksModal = function() {
+				userTasksModal.open();
+			};
+
 		}
 	]
 );

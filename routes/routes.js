@@ -16,6 +16,20 @@ function getTasks(res) {
     });
 };
 
+function getTasksByUser(userID, res) {
+    db.Task.find({ users: {$in: [userID] }}, function (err, tasks) {
+        if (err) {
+            // return error
+            console.log("Sending error: " + err)
+            res.send(err);
+        }
+
+        console.log("Got tasks by userID: " + tasks)
+        // return all tasks in JSON format
+        res.json(tasks);
+    });
+};
+
 
 function getUsers(res) {
     passportDB.User.find(function (err, users) {
@@ -59,6 +73,13 @@ module.exports = function(app, passport) {
         // get all tasks from the database
         getTasks(res);
     });
+
+    app.get('/api/tasks/users/:user_id', isLoggedIn, function (req, res) {
+        var userID = req.params.user_id
+        console.log("Get tasks by userID: " + userID);
+        // get all tasks by the userID from the database
+        getTasksByUser(userID, res);
+    });    
 
     // assign a task to a user
     app.post('/api/tasks/users/:user_id', isLoggedIn, function (req, res) {

@@ -5,6 +5,9 @@ appService.factory('Tasks', ['$http',function($http) {
 			get : function() {
 				return $http.get('/api/tasks');
 			},
+			findByUser : function(userID) {
+				return $http.get('/api/tasks/users/' + userID);
+			},
 			create : function(taskData) {
 				return $http.post('/api/tasks', taskData);
 			},
@@ -21,10 +24,10 @@ appService.factory('Tasks', ['$http',function($http) {
 }]);
 
 
-appService.factory('modal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+appService.factory('editModal', ['$compile', '$rootScope', function ($compile, $rootScope) {
 		return function() {
 		  var elm;
-		  var modal = {
+		  var editModal = {
 			open: function() {
 	   
 			  var html = `
@@ -83,7 +86,7 @@ appService.factory('modal', ['$compile', '$rootScope', function ($compile, $root
 			  angular.element(document.body).prepend(elm);
 	   
 			  $rootScope.close = function() {
-				modal.close();
+				editModal.close();
 			  };
 	   
 			  $rootScope.modalStyle = {"display": "block"};
@@ -97,6 +100,114 @@ appService.factory('modal', ['$compile', '$rootScope', function ($compile, $root
 			}
 		  };
 	   
-		  return modal;
+		  return editModal;
 		};
+}]);
+
+
+appService.factory('detailsModal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+	return function() {
+	  var elm;
+	  var detailsModal = {
+		open: function() {
+   
+		  var html = `
+		  <div class="modal" ng-style="modalStyle"> 
+				  <div class="modal-dialog">
+						  <div class="modal-content">
+								  <div class="modal-header">
+								  <h3 class="modal-title">Task Details</h3>
+								  </div>
+								  <div class="modal-body">
+
+								  <form>
+										<div class="form-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"> 
+													<label>Task Details</label>
+												</span>
+											</div>
+											<textarea name="details" ng-model="formData.details" class="form-control" rows="5" placeholder="Task details"></textarea>
+										</div>
+								  </form>
+						  
+									<div class="modal-footer">				
+											<button id="buttonClose" class="btn btn-primary" ng-click="close()">
+											Close
+											</button>
+									</div>
+						  </div>
+				  </div>
+		  </div>`;
+
+		  elm = angular.element(html);
+		  angular.element(document.body).prepend(elm);
+   
+		  $rootScope.close = function() {
+			detailsModal.close();
+		  };
+   
+		  $rootScope.modalStyle = {"display": "block"};
+   
+		  $compile(elm)($rootScope);
+		},
+		close: function() {
+		  if (elm) {
+			elm.remove();
+		  }
+		}
+	  };
+   
+	  return detailsModal;
+	};
+}]);
+
+
+
+appService.factory('userTasksModal', ['$compile', '$rootScope', function ($compile, $rootScope) {
+	return function() {
+	  var elm;
+	  var userTasksModal = {
+		open: function() {
+   
+		  var html = `
+				<div class="modal" ng-style="modalStyle"> 
+						<div class="modal-dialog">
+								<div class="modal-content">
+										<div class="modal-header">
+										<h3 class="modal-title">User Tasks</h3>
+										</div>
+										<div class="modal-body">
+											<div ui-grid="gridOptionsUserTasks"  ui-grid-selection ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>
+										</div>
+								
+										<div class="modal-footer">				
+												<button id="buttonClose" class="btn btn-primary" ng-click="close()">
+												Close
+												</button>
+										</div>
+								</div>
+						</div>
+				</div>`;
+
+		  elm = angular.element(html);
+		  angular.element(document.body).prepend(elm);
+   
+		  $rootScope.close = function() {
+			userTasksModal.close();
+		  };
+   
+		  $rootScope.modalStyle = {"display": "block"};
+   
+		  $compile(elm)($rootScope);
+		},
+		close: function() {
+		  if (elm) {
+			elm.remove();
+		  }
+		}
+	  };
+   
+	  return userTasksModal;
+	};
 }]);
