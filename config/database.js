@@ -2,7 +2,7 @@
 var mongoose = require('mongoose');
 
 //Set up default mongoose connection
-var mongoDB = 'mongodb://127.0.0.1/tasks';
+var mongoDB = 'mongodb://aynur:Task-user-2020@ds315359.mlab.com:15359/heroku_nxvwhvxd';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //Get the default connection
