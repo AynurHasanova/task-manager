@@ -33,36 +33,54 @@ appService.factory('modal', ['$compile', '$rootScope', function ($compile, $root
 			open: function() {
 	   
 			  var html = `
-					<div class="modal" ng-style="modalStyle"> 
-						{{modalStyle}} 
-						<div class="modal-dialog">
-								<div class="modal-content">
-										<div class="modal-header">
-										</div>
-										<div>
-											<label>Task Name</label>
-											<input type="text" name="name" ng-model="formData.title"/>
+			  <div class="modal" ng-style="modalStyle"> 
+					  <div class="modal-dialog">
+							  <div class="modal-content">
+									  <div class="modal-header">
+									  <h3 class="modal-title">Edit Task</h3>
+									  </div>
+									  <div class="modal-body">
+
+											<div class="form-group input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text"> 
+														<label>Task Name</label>
+													</span>
+												</div>
+												<input type="text" name="name" ng-model="formData.title" placeholder="Task name"  class="form-control input-lg"/>
+											</div>									  
 									
-											<label>Task Details</label>
-											<input type="text" name="address" ng-model="formData.details"/>
-									
-											<label>Due Date</label>
-											<input type="date" name="dueDate" ng-model="formData.dueDate" date-format/>
-									
-											<br/>
+											<div class="form-group input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text"> 
+														<label>Task Details</label>
+													</span>
+												</div>
+												<input type="text" name="details" ng-model="formData.details" placeholder="Task details"  class="form-control input-lg"/>
+											</div>
+							  
+											<div class="form-group input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text"> 
+														<label>Due Date</label>
+													</span>
+												</div>
+												<input type="date" name="dueDate" ng-model="formData.dueDate" date-format  class="form-control input-lg"/>
+										    </div>
 									
 											<input type="hidden" ng-model="formData._id" />
-											<input type="button" value="Save" ng-click="editRow(); close()" class="btn btn-primary"/>
-								  
-										</div>
-										<div class="modal-footer">
-												<button id="buttonClose" class="btn btn-primary" ng-click="close()">
+									
+											</div>
+											<div class="modal-footer">
+													<button class="btn btn-success"  ng-click="editRow(); close()">Save</button>
+					
+													<button id="buttonClose" class="btn btn-primary" ng-click="close()">
 													Close
-												</button>
-										</div>
-								</div>
-						</div>
-					</div>`;
+													</button>
+											</div>
+							  </div>
+					  </div>
+			  </div>`;
 
 			  elm = angular.element(html);
 			  angular.element(document.body).prepend(elm);

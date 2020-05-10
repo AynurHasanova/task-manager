@@ -20,7 +20,11 @@ app.config(function($routeProvider) {
     when('/edit', { // TODO - bunu davam ele gorek
         templateUrl: 'views/edit.html',
         controller: 'SignUpCtrl'
-    }).    
+    }).
+    when('/create', {
+        templateUrl: 'views/create.html',
+        controller: 'mainController'
+    }).   
     otherwise({
         redirectTo: '/home'
     });

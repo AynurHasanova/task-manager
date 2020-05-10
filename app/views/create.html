@@ -1,0 +1,47 @@
+<div ng-controller="mainController">
+	<span ng-show="currentUser">
+		<div class="row">
+
+			<div class="span4">
+
+						<div class="form-group input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text"> 
+									<label>Task Name</label>
+								</span>
+							</div>
+							<input type="text" name="name" ng-model="formData.title" placeholder="Task name"  class="form-control input-lg"/>
+						</div>									  
+				
+						<div class="form-group input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text"> 
+									<label>Task Details</label>
+								</span>
+							</div>
+							<input type="text" name="details" ng-model="formData.details" placeholder="Task details"  class="form-control input-lg"/>
+						</div>
+			
+						<div class="form-group input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text"> 
+									<label>Due Date</label>
+								</span>
+							</div>
+							<input type="date" name="dueDate" ng-init="model=(myDate | date:'dd-MM-yyyy')" ng-model="formData.dueDate" />
+						</div>
+													
+						<div class="form-group input-group">
+							<input type="hidden" ng-model="task._id" />
+							<button class="btn btn-success" ng-click="createTask()">Create Task </button>
+						</div>
+		
+			</div>
+
+		</div>
+	</span>
+	<span ng-show="!currentUser">
+		<h3>Please login or signup to continue</h3>
+	</span>
+
+ </div>

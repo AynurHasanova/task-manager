@@ -23,17 +23,16 @@ app.controller('mainController',
 			$scope.myDate = new Date('08-03-2020T00:00:00');
 		
 			$scope.gridOptionsTasks = {
-				    headerTemplate: 'tasks-grid-header-template.html',
 					columnDefs: [
 						{ 
 							name: 'title', 
-							displayName: 'Name',
+							displayName: 'Task Name',
 							cellEditableCondition: false,
 							enableColumnResizing: true
 						},
 						{ 
 							name: 'details', 
-							displayName: 'Details',
+							displayName: 'Task Details',
 							cellEditableCondition: false,
 							enableColumnResizing: true
 						},
@@ -90,7 +89,6 @@ app.controller('mainController',
 			};
 
 			$scope.gridOptionsUsers = {	
-				headerTemplate: 'users-grid-header-template.html',
 				columnDefs: [
 					{ 
 						name: 'userName',
@@ -100,7 +98,7 @@ app.controller('mainController',
 					},
 					{ 
 						name: 'created',
-						displayName: 'Registered',
+						displayName: 'Registration Date',
 						cellEditableCondition: false,
 						enableColumnResizing: true
 					}
@@ -142,6 +140,11 @@ app.controller('mainController',
 
 			$scope.addUserToTask = function() {
 				var userId = $scope.user_id;
+                if (userId == null || $scope.task._id == null) {
+					alert("Please select a task and a user from the tables to link them together");
+					return;
+				} 
+			
 				var returnvalue = confirm("Are you sure to add user " + userId + " to task " + $scope.task._id);
 				if (returnvalue == true) {
 					Tasks.addUser(userId, $scope.task)
@@ -338,7 +341,7 @@ app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
         .then(
 			function(response) {
 				$rootScope.currentUser = response;
-				$location.url("/profile");
+				$location.url("/home");
 			},
 			function (error) {
 				console.log(error, 'Cannot login');

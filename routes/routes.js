@@ -50,25 +50,25 @@ const addUserToTasks = function(userID, taskID, res) {
 
 module.exports = function(app, passport) {
 
-    app.get('/api/users', function (req, res) {
+    app.get('/api/users', isLoggedIn, function (req, res) {
         // get all users from the database
         getUsers(res);
     });
 
-    app.get('/api/tasks', function (req, res) {
+    app.get('/api/tasks', isLoggedIn, function (req, res) {
         // get all tasks from the database
         getTasks(res);
     });
 
     // assign a task to a user
-    app.post('/api/tasks/users/:user_id', function (req, res) {
+    app.post('/api/tasks/users/:user_id', isLoggedIn, function (req, res) {
         console.log("User assignment received, user_id: " 
         + req.params.user_id + ", task_id: " + req.body._id);
         addUserToTasks(req.params.user_id, req.body._id, res);
     });    
 
     // create a task and return all tasks after creation
-    app.post('/api/tasks', function (req, res) {
+    app.post('/api/tasks', isLoggedIn, function (req, res) {
 
         console.log("Backend received: " + JSON.stringify(req.body, null, 4));
 
@@ -88,7 +88,7 @@ module.exports = function(app, passport) {
     });
 
     // delete a task
-    app.delete('/api/tasks/:task_id', function (req, res) {
+    app.delete('/api/tasks/:task_id', isLoggedIn, function (req, res) {
         db.Task.remove({
             _id: req.params.task_id
         }, function (err, task) {
@@ -100,7 +100,7 @@ module.exports = function(app, passport) {
     });
 
 
-    app.post("/api/tasks/:task_id", function(req,res){
+    app.post("/api/tasks/:task_id", isLoggedIn, function(req,res){
             // get the values posted
             var task = {
                 title: req.sanitize('title').escape().trim(),
