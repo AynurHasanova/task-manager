@@ -36,32 +36,34 @@ appService.factory('modal', ['$compile', '$rootScope', function ($compile, $root
 									  </div>
 									  <div class="modal-body">
 
-											<div class="form-group input-group">
+									  <form>
+											<div class="form-group">
 												<div class="input-group-prepend">
 													<span class="input-group-text"> 
 														<label>Task Name</label>
 													</span>
 												</div>
-												<input type="text" name="name" ng-model="formData.title" placeholder="Task name"  class="form-control input-lg"/>
+												<input type="text" name="name" ng-model="formData.title" placeholder="Task name"  class="form-control"/>
 											</div>									  
+																
 									
-											<div class="form-group input-group">
+											<div class="form-group">
 												<div class="input-group-prepend">
 													<span class="input-group-text"> 
 														<label>Task Details</label>
 													</span>
 												</div>
-												<input type="text" name="details" ng-model="formData.details" placeholder="Task details"  class="form-control input-lg"/>
-											</div>
+												<textarea name="details" ng-model="formData.details" class="form-control" rows="5" placeholder="Task details"></textarea>
+										    </div>
 							  
-											<div class="form-group input-group">
+											<div class="form-group">
 												<div class="input-group-prepend">
 													<span class="input-group-text"> 
 														<label>Due Date</label>
 													</span>
 												</div>
-												<input type="date" name="dueDate" ng-model="formData.dueDate" date-format  class="form-control input-lg"/>
-										    </div>
+												<input type="date" name="dueDate" ng-init="model=(myDate | date:'dd-MM-yyyy')" ng-model="formData.dueDate" class="form-control"/>
+											</div>
 									
 											<input type="hidden" ng-model="formData._id" />
 									

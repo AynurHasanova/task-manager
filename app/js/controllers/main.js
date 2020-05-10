@@ -102,6 +102,14 @@ app.controller('mainController',
 						displayName: 'Registration Date',
 						cellEditableCondition: false,
 						enableColumnResizing: true
+					},
+					{ 
+						name: 'Add to Task', 
+						cellTemplate: '<button class="btn btn-success" ng-click="grid.appScope.addUserToTask(row)">Add to Task</button>',
+						cellEditableCondition: false,
+						enableFiltering: false,
+						enableSorting: false,
+						enableColumnResizing: false
 					}
 				],
 				showFooter: true,
@@ -110,14 +118,13 @@ app.controller('mainController',
 				enableFiltering: true,
 				enableRowSelection: true,
 				enableSelectAll: true,
-				enableRowHeaderSelection: true,
+				enableRowHeaderSelection: false,
                 rowHeight: 37,
 				onRegisterApi: function(gridApi){
 					//set gridApi on scope
 					$scope.gridApi = gridApi;
 					gridApi.selection.on.rowSelectionChanged($scope,function(row){
 					  var msg = 'Users row selected ' + row.isSelected + " with id " + row.entity._id;
-					  $scope.user_id = row.entity._id;
 					  console.log(msg);
 					});
 				},
@@ -139,22 +146,25 @@ app.controller('mainController',
 					}
 				);
 
-			$scope.addUserToTask = function() {
-				var userId = $scope.user_id;
-                if (userId == null || $scope.task._id == null) {
-					alert("Please select a task and a user from the tables to link them together");
+			$scope.addUserToTask = function(row) {
+				var userId = row.entity._id;
+				var userName = row.entity.userName;
+				console.log("Userid: " + userId);
+				// if a userID, task, or taskID is null we cannot do anything
+                if (userId == null || $scope.task == null || ( $scope.task != null && $scope.task._id == null) ) {
+					alert('Please select a task from the task table for user "' + userName + '"');
 					return;
 				} 
 			
-				var returnvalue = confirm("Are you sure to add user " + userId + " to task " + $scope.task._id);
+				var returnvalue = confirm('Are you sure to add user "' + userName + '" to task  "' + $scope.task.title + '"');
 				if (returnvalue == true) {
 					Tasks.addUser(userId, $scope.task)
 						.then(
 							function(response) {
-								console.log(error, 'Assigned a task to the user');
+								console.log(error, 'Assigned user "' + userName + '" to task "' + $scope.task  + '"');
 							},
 							function (error){
-								console.log(error, 'Cannot assign a task to the user task');
+								console.log(error, 'Failed to assign user "' + userName + '" to task "' + $scope.task  + '"');
 							}
 						);
 				}
