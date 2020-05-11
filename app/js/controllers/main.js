@@ -188,7 +188,6 @@ app.controller('mainController',
 			};
 
 			// GET =====================================================================
-			// when landing on the page, get all users and show them
 			// use the service to get all the users
 			Users.get()
 				.then(
@@ -196,7 +195,6 @@ app.controller('mainController',
 						$scope.users = response.data;
 						$scope.loading = false;
 						$scope.gridOptionsUsers.data = response.data;
-						console.log("Got user data: " + JSON.stringify(response.data, null, 4));
 					},
 					function (error){
 						console.log(error, 'Cannot user get data');
@@ -244,52 +242,51 @@ app.controller('mainController',
 				);
 
 			$scope.getUserTasks = function(user) {
-				var userID = user._id;
-				var userName = user.userName;
-				console.log("userID: " + userID);
-				console.log("userName: " + userName);
-				Tasks.findByUser(userID)
-					.then(
-						function(response) {
-							console.log("Got task data: " + JSON.stringify(response.data, null, 4));
-							$rootScope.gridOptionsUserTasks.data = response.data;
-						},
-						function (error){
-							console.log(error, 'Failed to get tasks by user id "' + userID + '"');
-						}
-					);
+				if ( user != undefined ) {
+					var userID = user._id;
+					var userName = user.userName;
+					if (userID != undefined ) { 
+						console.log("Extracted userID: " + userID);
+					} else if (user.data._id != undefined) {
+						userID = user.data._id;
+						console.log("Extracted userID from user data: " + userID);
+					}
+					if ( userName != undefined ) {
+						$rootScope.currentUser.data = user;
+						console.log("Extracted userName: " + userName);
+					} else if ( user.data.userName != undefined ) {
+						userName = user.data.userName;
+						$rootScope.currentUser = user;
+						console.log("Extracted userName from user data: " + userName);
+					}
+					//console.log("$rootScope.currentUser : " + JSON.stringify($rootScope.currentUser, null, 4));
+					Tasks.findByUser(userID)
+						.then(
+							function(response) {
+								console.log("Got task data: " + JSON.stringify(response.data, null, 4));
+								$rootScope.gridOptionsUserTasks.data = response.data;
+							},
+							function (error){
+								console.log(error, 'Failed to get tasks by user id "' + userID + '"');
+							}
+						);
+				}
 			};
 
 			if ($rootScope.currentUser != undefined) {
 				$scope.getUserTasks($rootScope.currentUser);
 			}
 
-			$scope.mytasks = function(user) {
-				$http.post('/mytasks', user)
-				  .then(
-					  function(user) {
-						$rootScope.currentUser = user;
-						$location.url("/mytasks");
-					  },
-					  function (error){
-						console.log(error, 'Cannot display my tasks view');
-					  }				
-				  );
-			}
-
-
 			// CREATE ==================================================================
 			// when submitting the add form, send the text to the node API
 			$scope.createTask = function() {
 
-				// validate the formData to make sure that something is there
-				// if form is empty, nothing will happen
+				// validate the formData
+				// if the form is empty, nothing will happen
 				if ($scope.formData.title != undefined) {
 					$scope.loading = true;
 
-					// call the create function from our service (returns a promise object)
 					Tasks.create($scope.formData)
-						// if successful creation, call our get function to get all the new tasks
 						.then(
 							function(response) {
 								var n = $scope.gridOptionsTasks.data.length + 1;
@@ -300,8 +297,9 @@ app.controller('mainController',
 									"done": false
 								});
 								$scope.loading = false;
-								$scope.formData = {}; // clear the form so our user is ready to enter another
-								$scope.tasks = response.data; // assign our new list of tasks  
+								$scope.formData = {}; // clear the form so we're ready to enter more
+								$scope.tasks = response.data; // assign our new list of tasks
+								$location.url("/alltasks");
 							},
 							function (error){
 								console.log(error, 'Cannot create task');
@@ -329,16 +327,14 @@ app.controller('mainController',
 			};		
 
 			$scope.editRow = function( rowEntity ) {
-				// call the create function from our service (returns a promise object)
 				Tasks.update(rowEntity._id, rowEntity)
-					// if successful creation, call our get function to get all the new tasks
 					.then(
 						function(response) {
 							rowEntity.dueDate = new Date(rowEntity.dueDate);
 							$scope.loading = false;
-							$scope.formData = {}; // clear the form so our user is ready to enter another
+							$scope.formData = {};
 							$scope.tasks = response.data; // assign our new list of tasks
-							$location.url("/home");
+							$location.url("/alltasks");
 						},
 						function (error){
 							console.log(error, 'Cannot update task');
@@ -356,13 +352,11 @@ app.controller('mainController',
 				$rootScope.editRow = function() {
 					var returnvalue = confirm("Are you sure to update task " + row.entity.title);
 					if (returnvalue == true) {
-						// call the create function from our service (returns a promise object)
 						Tasks.update($rootScope.formData._id, $rootScope.formData)
-							// if successful creation, call our get function to get all the new tasks
 							.then(
 								function(response) {
 									$scope.loading = false;
-									$scope.formData = {}; // clear the form so the user is ready to enter another
+									$scope.formData = {};
 									$scope.tasks = response.data; // assign our new list of tasks
 								},
 								function (error){

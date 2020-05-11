@@ -20,9 +20,9 @@ app.controller("SignUpCtrl", function($scope, $http, $rootScope, $location) {
       if (user.password == user.password2) {
         $http.post('/signup', user)
           .then(
-			  function(user) {
-				$rootScope.currentUser = user;
-				$location.url("/home");
+			  function(response) {
+				$rootScope.currentUser = response;
+				$location.url("/alltasks");
 			  },
 			  function (error){
 				console.log(error, 'Cannot signup');
@@ -39,7 +39,7 @@ app.controller("LoginCtrl", function($location, $scope, $http, $rootScope) {
         .then(
 			function(response) {
 				$rootScope.currentUser = response;
-				$location.url("/home");
+				$location.url("/alltasks");
 			},
 			function (error) {
 				console.log(error, 'Cannot login');
