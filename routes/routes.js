@@ -106,6 +106,7 @@ module.exports = function(app, passport) {
             title: req.body.title,
             details: req.body.details,
             dueDate: req.body.dueDate,
+            priority: req.body.priority,
             done: false,
         }, function (err, task) {
             if (err)
@@ -134,6 +135,7 @@ module.exports = function(app, passport) {
             var task = {
                 title: req.sanitize('title').escape().trim(),
                 details: req.sanitize('details').escape().trim(),
+                priority: req.sanitize('priority').escape().trim(),
                 dueDate: req.sanitize('dueDate').escape().trim(),
                 done: req.body.done
             }

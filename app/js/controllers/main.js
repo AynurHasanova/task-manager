@@ -39,6 +39,12 @@ app.controller('mainController',
 							enableColumnResizing: false
 						},
 						{ 
+							name: 'priority', 
+							displayName: 'Priority', 
+							cellEditableCondition: false,
+							enableColumnResizing: false
+						},
+						{ 
 							name: 'done', 
 							displayName: 'Done', 
 							type: 'boolean',
@@ -99,6 +105,12 @@ app.controller('mainController',
 						cellEditableCondition: false,
 						enableColumnResizing: true
 					},
+					{ 
+						name: 'priority', 
+						displayName: 'Priority', 
+						cellEditableCondition: false,
+						enableColumnResizing: false
+					},					
 					{ 
 						name: 'dueDate', 
 						displayName: 'Due Date', 

@@ -57,7 +57,20 @@ appService.factory('editModal', ['$compile', '$rootScope', function ($compile, $
 													</span>
 												</div>
 												<textarea name="details" ng-model="formData.details" class="form-control" rows="5" placeholder="Task details"></textarea>
-										    </div>
+											</div>
+											
+
+											<div class="form-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text"> 
+														<label>Priority</label>
+													</span>
+												</div>
+												<select id="priority" name="priority" ng-model="formData.priority" class="form-control">
+													<option value="low">Low</option>
+													<option value="high">High</option>
+												</select>
+										    </div>											
 							  
 											<div class="form-group">
 												<div class="input-group-prepend">
