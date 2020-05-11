@@ -127,7 +127,7 @@ appService.factory('detailsModal', ['$compile', '$rootScope', function ($compile
 													<label>Task Details</label>
 												</span>
 											</div>
-											<textarea name="details" ng-model="formData.details" class="form-control" rows="5" placeholder="Task details"></textarea>
+											<textarea readonly name="details" ng-model="formData.details" class="form-control" rows="5" placeholder="Task details"></textarea>
 										</div>
 								  </form>
 						  
