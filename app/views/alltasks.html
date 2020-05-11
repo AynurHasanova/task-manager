@@ -1,0 +1,27 @@
+<div ng-controller="mainController">
+
+    <div class="row">
+        <div class="span4">
+            <span class="input-group-text">
+                <br/>
+                <p class="text-center"><label>List of Tasks</label></p>
+            </span>
+        </div>
+        <div class="span4">
+	        <div ui-grid="gridOptionsTasks"  ui-grid-selection ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>
+        </div>
+
+        <div class="span4">
+            <span class="input-group-text">
+                <br/>
+                <p class="text-center"><label>List of Users</label></p>
+            </span>
+        </div>  
+        
+        <div class="span4">
+           <div ui-grid="gridOptionsUsers" ui-grid-selection ui-grid-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>
+        </div>
+
+    </div>
+
+ </div>

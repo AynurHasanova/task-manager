@@ -35,7 +35,7 @@ appService.factory('editModal', ['$compile', '$rootScope', function ($compile, $
 					  <div class="modal-dialog">
 							  <div class="modal-content">
 									  <div class="modal-header">
-									  <h3 class="modal-title">Edit Task</h3>
+									  <h3 class="modal-title">Editing "{{formData.title}}"</h3>
 									  </div>
 									  <div class="modal-body">
 
@@ -116,7 +116,7 @@ appService.factory('detailsModal', ['$compile', '$rootScope', function ($compile
 				  <div class="modal-dialog">
 						  <div class="modal-content">
 								  <div class="modal-header">
-								  <h3 class="modal-title">Task Details</h3>
+								  <h3 class="modal-title">Details of "{{formData.title}}"</h3>
 								  </div>
 								  <div class="modal-body">
 
@@ -171,11 +171,11 @@ appService.factory('userTasksModal', ['$compile', '$rootScope', function ($compi
 		open: function() {
    
 		  var html = `
-				<div class="modal" ng-style="modalStyle"> 
+				<div class="modal" ng-style="modalStyle">
 						<div class="modal-dialog">
 								<div class="modal-content">
 										<div class="modal-header">
-										<h3 class="modal-title">User Tasks</h3>
+										<h3 class="modal-title">Tasks of user "{{formData.userName}}" </h3>
 										</div>
 										<div class="modal-body">
 											<div ui-grid="gridOptionsUserTasks"  ui-grid-selection ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns class="grid"></div>

@@ -53,12 +53,16 @@
 
 		<ul class="nav navbar-nav">
 			<span ng-show="!currentUser">
-				<a href="#!login" class="btn btn-link" >Login</a>
-				<a href="#!signup" class="btn btn-link" >Signup</a>
+				<a href="#!alltasks" class="btn btn-primary btn-sm" >All Tasks</a>
+				<a href="#!login" class="btn btn-primary btn-sm" >Login</a>
+				<a href="#!signup" class="btn btn-primary btn-sm" >Signup</a>
 			</span>
 			<span ng-show="currentUser">
-				<a href="#!create" class="btn btn-link">Create Task</a>
-				<a href="#!logout" ng-click="logout()" class="btn btn-link">Logout</a>
+			    <a href="#!alltasks" class="btn btn-primary btn-sm" >All Tasks</a>
+				<a href="#!create" class="btn btn-primary btn-sm">Create Task</a>
+				<a href="#!mytasks" class="btn btn-primary btn-sm">My Tasks</a>
+				<a href="#!logout" ng-click="logout()" class="btn btn-primary btn-sm">Logout</a>
+				<label class="btn btn-info btn-sm" >Logged in as {{currentUser.data.userName}}</label>
 			</span>
         </ul>
 	  </div>	

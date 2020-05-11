@@ -55,7 +55,7 @@ app.controller('mainController',
 						},
 						{ 
 							name: 'Delete', 
-							cellTemplate: '<button class="btn btn-danger" ng-click="grid.appScope.deleteRow(row)">Delete</button>',
+							cellTemplate: '<button ng-disabled="!grid.appScope.currentUser" class="btn btn-danger" ng-click="grid.appScope.deleteRow(row)">Delete</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
 							enableSorting: false,
@@ -63,7 +63,7 @@ app.controller('mainController',
 						},
 						{ 
 							name: 'Edit', 
-							cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.showEditModal(row)">Edit</button>',
+							cellTemplate: '<button ng-disabled="!grid.appScope.currentUser" class="btn btn-info" ng-click="grid.appScope.showEditModal(row)">Edit</button>',
 							cellEditableCondition: false,
 							enableFiltering: false,
 							enableSorting: false,
@@ -121,7 +121,7 @@ app.controller('mainController',
 				enableFiltering: true,     
 				enableRowSelection: true, 
 				enableSelectAll: false,
-				enableRowHeaderSelection: true,  
+				enableRowHeaderSelection: false,  
 				noUnselect: true,
 				rowHeight: 37
 			};	
@@ -142,7 +142,7 @@ app.controller('mainController',
 					},
 					{ 
 						name: 'Add to Task', 
-						cellTemplate: '<button class="btn btn-success" ng-click="grid.appScope.addUserToTask(row)">Add to Task</button>',
+						cellTemplate: '<button ng-disabled="!grid.appScope.currentUser" class="btn btn-success" ng-click="grid.appScope.addUserToTask(row)">Add to Task</button>',
 						cellEditableCondition: false,
 						enableFiltering: false,
 						enableSorting: false,
@@ -150,7 +150,7 @@ app.controller('mainController',
 					},
 					{ 
 						name: 'Show Tasks', 
-						cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.getUserTasks(row); grid.appScope.showUserTasksModal()">Show Tasks</button>',
+						cellTemplate: '<button class="btn btn-info" ng-click="grid.appScope.getUserTasks(row.entity); grid.appScope.showUserTasksModal(row)">Show Tasks</button>',
 						cellEditableCondition: false,
 						enableFiltering: false,
 						enableSorting: false,
@@ -216,7 +216,7 @@ app.controller('mainController',
 			};
 
 			// GET =====================================================================
-			// when landing on the page, get all tasks and show them
+			// when loading on the home page, get all tasks and show them
 			// use the service to get all the tasks
 			Tasks.get()
 				.then(
@@ -231,9 +231,9 @@ app.controller('mainController',
 					}
 				);
 
-			$scope.getUserTasks = function(row) {
-				var userID = row.entity._id;
-				var userName = row.entity.userName;
+			$scope.getUserTasks = function(user) {
+				var userID = user._id;
+				var userName = user.userName;
 				console.log("userID: " + userID);
 				console.log("userName: " + userName);
 				Tasks.findByUser(userID)
@@ -246,7 +246,25 @@ app.controller('mainController',
 							console.log(error, 'Failed to get tasks by user id "' + userID + '"');
 						}
 					);
-			};	
+			};
+
+			if ($rootScope.currentUser != undefined) {
+				$scope.getUserTasks($rootScope.currentUser);
+			}
+
+			$scope.mytasks = function(user) {
+				$http.post('/mytasks', user)
+				  .then(
+					  function(user) {
+						$rootScope.currentUser = user;
+						$location.url("/mytasks");
+					  },
+					  function (error){
+						console.log(error, 'Cannot display my tasks view');
+					  }				
+				  );
+			}
+
 
 			// CREATE ==================================================================
 			// when submitting the add form, send the text to the node API
@@ -314,32 +332,6 @@ app.controller('mainController',
 							console.log(error, 'Cannot update task');
 						}
 					);
-			};	
-
-			// UPDATE ==================================================================
-			// when submitting the add form, send the text to the node API
-			$scope.updateTask = function(id) {
-				console.log("Updating id: " + id + ", with: " + JSON.stringify($scope.formData, null, 4));
-
-				// validate the formData to make sure that something is there
-				// if form is empty, nothing will happen
-				if ($scope.formData.title != undefined) {
-					$scope.loading = true;
-
-					// call the create function from our service (returns a promise object)
-					Tasks.update(id, $scope.formData)
-						// if successful creation, call our get function to get all the new tasks
-						.then(
-							function(response) {
-								$scope.loading = false;
-								$scope.formData = {}; // clear the form so our user is ready to enter another
-								$scope.tasks = response.data; // assign our new list of tasks
-							},
-							function (error){
-								console.log(error, 'Cannot update task');
-							}
-						);
-				}
 			};
 
 			// A modal view for editing a task on a new pop-up window
@@ -382,7 +374,8 @@ app.controller('mainController',
 
 			// A modal view for viewing user's tasks on a new pop-up window
 			var userTasksModal = new userTasksModal();
-			$scope.showUserTasksModal = function() {
+			$scope.showUserTasksModal = function(row) {
+				$rootScope.formData = row.entity;
 				userTasksModal.open();
 			};
 

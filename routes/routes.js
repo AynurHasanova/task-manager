@@ -17,17 +17,23 @@ function getTasks(res) {
 };
 
 function getTasksByUser(userID, res) {
-    db.Task.find({ users: {$in: [userID] }}, function (err, tasks) {
-        if (err) {
-            // return error
-            console.log("Sending error: " + err)
-            res.send(err);
-        }
-
-        console.log("Got tasks by userID: " + tasks)
-        // return all tasks in JSON format
-        res.json(tasks);
-    });
+    if (userID != undefined) {
+        db.Task.find({ users: {$in: [userID] }}, function (err, tasks) {
+            if (err) {
+                // return error
+                console.log("Sending error: " + err)
+                res.send(err);
+            } else {
+                console.log("Got tasks by userID: " + tasks)
+                if (tasks != undefined) {
+                    // return all tasks in JSON format
+                    res.json(tasks);
+                } else {
+                    console.log("Could not get tasks for userID: " + userID);
+                }
+            }
+        });
+    };
 };
 
 
@@ -64,12 +70,12 @@ const addUserToTasks = function(userID, taskID, res) {
 
 module.exports = function(app, passport) {
 
-    app.get('/api/users', isLoggedIn, function (req, res) {
+    app.get('/api/users', function (req, res) {
         // get all users from the database
         getUsers(res);
     });
 
-    app.get('/api/tasks', isLoggedIn, function (req, res) {
+    app.get('/api/tasks', function (req, res) {
         // get all tasks from the database
         getTasks(res);
     });
@@ -77,8 +83,10 @@ module.exports = function(app, passport) {
     app.get('/api/tasks/users/:user_id', isLoggedIn, function (req, res) {
         var userID = req.params.user_id
         console.log("Get tasks by userID: " + userID);
-        // get all tasks by the userID from the database
-        getTasksByUser(userID, res);
+        if ( userID != undefined) {
+            // get all tasks by the userID from the database
+            getTasksByUser(userID, res);
+        }
     });    
 
     // assign a task to a user
@@ -186,16 +194,16 @@ module.exports = function(app, passport) {
   
     // handle logout
     app.post("/logout", function(req, res) {
+        console.log("Logout invoked");
         req.logOut();
         res.send(200);
     })
 
     // loggedin
     app.get("/loggedin", function(req, res) {
+        console.log("Loggedin invoked. req.user: " + req.user)
         res.send(req.isAuthenticated() ? req.user : '0');
     });
-
-
 }
 
 

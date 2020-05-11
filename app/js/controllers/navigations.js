@@ -11,9 +11,9 @@ app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
 			}
 		);
     }
-  });
+});
   
-  app.controller("SignUpCtrl", function($scope, $http, $rootScope, $location) {
+app.controller("SignUpCtrl", function($scope, $http, $rootScope, $location) {
     $scope.signup = function(user) {
 
       // TODO: verify passwords are the same and notify user
@@ -30,9 +30,9 @@ app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
 		  );
       }
     }
-  });
+});
   
-  app.controller("LoginCtrl", function($location, $scope, $http, $rootScope) {
+app.controller("LoginCtrl", function($location, $scope, $http, $rootScope) {
     $scope.login = function(user) {
 
       $http.post('/login', user)
