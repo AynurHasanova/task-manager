@@ -42,7 +42,24 @@ app.controller('mainController',
 							type: 'date', 
 							cellFilter: 'date:"dd-MM-yyyy"',
 							cellEditableCondition: false,
-							enableColumnResizing: false
+							enableColumnResizing: false,
+							cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+								var cellValue = new Date(grid.getCellValue(row ,col)).toDateString();
+								var today = new Date().toDateString();
+								var taskDue = ( today === cellValue);
+								var taskName = row.entity.title;
+								var done = row.entity.done;
+								var owner = row.entity.owner;
+								if (grid.appScope.currentUser != undefined && grid.appScope.currentUser.data != undefined) {
+									if ( (!done && taskDue) && (owner === grid.appScope.currentUser.data.userName) ) {
+										console.log(taskName + " is due today!");
+										swal("Task is Due!", taskName + " is due today!", "warning")
+										return 'pink';
+									} else {
+										//return 'blue';
+									}
+								}
+							}
 						},
 						{ 
 							name: 'priority', 
@@ -54,7 +71,7 @@ app.controller('mainController',
 							name: 'done', 
 							displayName: 'Done', 
 							type: 'boolean',
-							cellEditableCondition: true,
+							cellEditableCondition: ( $rootScope.currentUser != undefined ),
 							enableColumnResizing: false
 						},
 						{ 
@@ -123,7 +140,21 @@ app.controller('mainController',
 						type: 'date', 
 						cellFilter: 'date:"dd-MM-yyyy"',
 						cellEditableCondition: false,
-						enableColumnResizing: false
+						enableColumnResizing: false,
+						cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+							var cellValue = new Date(grid.getCellValue(row ,col)).toDateString();
+							var today = new Date().toDateString();
+							var taskDue = ( today === cellValue);
+							var taskName = row.entity.title;
+							var done = row.entity.done;
+							var owner = row.entity.owner;
+							if ( (!done && taskDue) && (owner === grid.appScope.currentUser.userName) ) {
+								swal("Task is Due!", taskName + " is due today!", "warning")
+								return 'pink';
+							} else {
+								//return 'blue';
+							}
+						}
 					},
 					{ 
 						name: 'done', 
@@ -267,16 +298,15 @@ app.controller('mainController',
 						console.log("Extracted userName from user data: " + userName);
 					}
 
-					if ( $rootScope.currentUser != undefined ) {
-						if ( userName != undefined ) {
-							$rootScope.currentUser.data = user;
-							console.log("Extracted userName: " + userName);
-						} else if ( user.data.userName != undefined ) {
-							userName = user.data.userName;
-							$rootScope.currentUser = user;
-							console.log("Extracted userName from user data: " + userName);
-						}
-				    }
+					if ( userName != undefined ) {
+						$rootScope.selectedUser = user;
+						console.log("Extracted userName: " + userName);
+					} else if ( user.data.userName != undefined ) {
+						userName = user.data.userName;
+						$rootScope.selectedUser = user;
+						console.log("Extracted userName from user data: " + userName);
+					}
+				    
 					Tasks.findByUser(userName)
 						.then(
 							function(response) {
@@ -292,6 +322,8 @@ app.controller('mainController',
 
 			if ($rootScope.currentUser != undefined) {
 				$scope.getUserTasks($rootScope.currentUser);
+			} else if ($rootScope.selectedUser != undefined ) {
+				$scope.getUserTasks($rootScope.selectedUser);
 			}
 
 			// CREATE ==================================================================
@@ -302,7 +334,11 @@ app.controller('mainController',
 				// if the form is empty, nothing will happen
 				if ($scope.formData.title != undefined) {
 					$scope.loading = true;
-					$scope.formData.owner = $rootScope.currentUser.data.userName;
+					if ($rootScope.currentUser.data != undefined) {
+						$scope.formData.owner = $rootScope.currentUser.data.userName;
+					} else if ($rootScope.currentUser != undefined) {
+						$scope.formData.owner = $rootScope.currentUser.userName;
+					}
 					console.log("Set the owner to: " + $scope.formData.owner);
 					Tasks.create($scope.formData)
 						.then(

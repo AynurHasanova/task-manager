@@ -17,6 +17,13 @@
   height: 60px;
 }
 
+.grid .ui-grid-row .blue {
+  background-color: lightblue;
+}
+
+.grid .ui-grid-row .pink {
+  background-color: pink;
+}
 
 body {
   padding-bottom: 25px;
