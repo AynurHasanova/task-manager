@@ -7,7 +7,8 @@ app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
 				$location.url("/home");
 			},
 			function (error){
-				console.log(error, 'Cannot logout');
+				console.log(error, 'Logout failed');
+				swal("Logout failed");
 			}
 		);
     }
@@ -26,6 +27,7 @@ app.controller("SignUpCtrl", function($scope, $http, $rootScope, $location) {
 			  },
 			  function (error){
 				console.log(error, 'Cannot signup');
+				swal("Try a different user id");
 			  }				
 		  );
       }
@@ -43,6 +45,7 @@ app.controller("LoginCtrl", function($location, $scope, $http, $rootScope) {
 			},
 			function (error) {
 				console.log(error, 'Cannot login');
+				swal("Wrong credentials");
 			}				
 		);
     }

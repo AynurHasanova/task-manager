@@ -18,7 +18,7 @@ function getTasks(res) {
 
 function getTasksByUser(userID, res) {
     if (userID != undefined) {
-        db.Task.find({ users: {$in: [userID] }}, function (err, tasks) {
+        db.Task.find({ $or: [ { owner: {$in: [userID] } }, { users: {$in: [userID] } } ] }, function (err, tasks) {
             if (err) {
                 // return error
                 console.log("Sending error: " + err)
@@ -80,7 +80,7 @@ module.exports = function(app, passport) {
         getTasks(res);
     });
 
-    app.get('/api/tasks/users/:user_id', isLoggedIn, function (req, res) {
+    app.get('/api/tasks/users/:user_id', function (req, res) {
         var userID = req.params.user_id
         console.log("Get tasks by userID: " + userID);
         if ( userID != undefined) {
@@ -107,6 +107,7 @@ module.exports = function(app, passport) {
             details: req.body.details,
             dueDate: req.body.dueDate,
             priority: req.body.priority,
+            owner: req.body.owner,
             done: false,
         }, function (err, task) {
             if (err)
@@ -131,12 +132,14 @@ module.exports = function(app, passport) {
 
 
     app.post("/api/tasks/:task_id", isLoggedIn, function(req,res){
+        console.log("Backend received request for update: " + JSON.stringify(req.body, null, 4));
+
             // get the values posted
             var task = {
                 title: req.sanitize('title').escape().trim(),
                 details: req.sanitize('details').escape().trim(),
-                priority: req.sanitize('priority').escape().trim(),
                 dueDate: req.sanitize('dueDate').escape().trim(),
+                priority: req.body.priority? req.body.priority: "low",
                 done: req.body.done
             }
         

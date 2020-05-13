@@ -31,6 +31,12 @@ app.controller('mainController',
 							enableColumnResizing: true
 						},
 						{ 
+							name: 'owner', 
+							displayName: 'Task Owner',
+							cellEditableCondition: false,
+							enableColumnResizing: true
+						},
+						{ 
 							name: 'dueDate', 
 							displayName: 'Due Date', 
 							type: 'date', 
@@ -206,23 +212,32 @@ app.controller('mainController',
 				var userName = row.entity.userName;
 				console.log("userID: " + userID);
 				// if a userID, task, or taskID is null we cannot do anything
-                if (userID == null || $scope.task == null || ( $scope.task != null && $scope.task._id == null) ) {
-					alert('Please select a task from the task table for user "' + userName + '"');
+                if (userName == null || $scope.task == null || ( $scope.task != null && $scope.task._id == null) ) {
+					swal('Please select a task from the task table for user "' + userName + '"');
 					return;
 				} 
 			
-				var returnvalue = confirm('Are you sure to add user "' + userName + '" to task  "' + $scope.task.title + '"');
-				if (returnvalue == true) {
-					Tasks.addUser(userID, $scope.task)
+				swal({
+					title: "Are you sure to assign '" + userName + "' to '" + $scope.task.title + "'",
+					text: "Your will not be able to reassign the user!",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Yes, do it!",
+					closeOnConfirm: true
+				  },
+				  function(){
+					Tasks.addUser(userName, $scope.task)
 						.then(
 							function(response) {
-								console.log(error, 'Assigned user "' + userName + '" to task "' + $scope.task  + '"');
+								console.log('Assigned user "' + userName + '" to task "' + $scope.task  + '"');
+								// swal("Deleted!", 'Assigned user "' + userName + '" to task "' + $scope.task  + '"', "success");
 							},
 							function (error){
 								console.log(error, 'Failed to assign user "' + userName + '" to task "' + $scope.task  + '"');
 							}
 						);
-				}
+				  });
 			};
 
 			// GET =====================================================================
@@ -243,31 +258,33 @@ app.controller('mainController',
 
 			$scope.getUserTasks = function(user) {
 				if ( user != undefined ) {
-					var userID = user._id;
+					// var userID = user._id;
 					var userName = user.userName;
-					if (userID != undefined ) { 
-						console.log("Extracted userID: " + userID);
-					} else if (user.data._id != undefined) {
-						userID = user.data._id;
-						console.log("Extracted userID from user data: " + userID);
-					}
-					if ( userName != undefined ) {
-						$rootScope.currentUser.data = user;
+					if (userName != undefined ) { 
 						console.log("Extracted userName: " + userName);
-					} else if ( user.data.userName != undefined ) {
+					} else if (user.data.userName != undefined) {
 						userName = user.data.userName;
-						$rootScope.currentUser = user;
 						console.log("Extracted userName from user data: " + userName);
 					}
-					//console.log("$rootScope.currentUser : " + JSON.stringify($rootScope.currentUser, null, 4));
-					Tasks.findByUser(userID)
+
+					if ( $rootScope.currentUser != undefined ) {
+						if ( userName != undefined ) {
+							$rootScope.currentUser.data = user;
+							console.log("Extracted userName: " + userName);
+						} else if ( user.data.userName != undefined ) {
+							userName = user.data.userName;
+							$rootScope.currentUser = user;
+							console.log("Extracted userName from user data: " + userName);
+						}
+				    }
+					Tasks.findByUser(userName)
 						.then(
 							function(response) {
 								console.log("Got task data: " + JSON.stringify(response.data, null, 4));
 								$rootScope.gridOptionsUserTasks.data = response.data;
 							},
 							function (error){
-								console.log(error, 'Failed to get tasks by user id "' + userID + '"');
+								console.log(error, 'Failed to get tasks by user id "' + userName + '"');
 							}
 						);
 				}
@@ -285,7 +302,8 @@ app.controller('mainController',
 				// if the form is empty, nothing will happen
 				if ($scope.formData.title != undefined) {
 					$scope.loading = true;
-
+					$scope.formData.owner = $rootScope.currentUser.data.userName;
+					console.log("Set the owner to: " + $scope.formData.owner);
 					Tasks.create($scope.formData)
 						.then(
 							function(response) {
@@ -309,12 +327,22 @@ app.controller('mainController',
 			};
 
 			$scope.deleteRow = function(row) {
-				var returnvalue = confirm("Are you sure to delete task " + row.entity.title);
-				if (returnvalue == true) {
+				swal({
+					title: "Are you sure to delete " + row.entity.title,
+					text: "Your will not be able to undo this operation!",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Yes, do it!",
+					closeOnConfirm: false
+				  },
+				  function(){
 					Tasks.delete(row.entity._id)
 						.then(
 							function(response) {
 								$scope.tasks = response.data;
+								console.log('Task deleted');
+								swal("Deleted!", row.entity.title + " deleted.", "success");
 							},
 							function (error){
 								console.log(error, 'Cannot delete task');
@@ -323,7 +351,8 @@ app.controller('mainController',
 
 					var index = $scope.gridOptionsTasks.data.indexOf(row.entity);
 					$scope.gridOptionsTasks.data.splice(index, 1);
-				}
+				  });
+
 			};		
 
 			$scope.editRow = function( rowEntity ) {
@@ -350,20 +379,30 @@ app.controller('mainController',
 				$rootScope.formData = row.entity;
 				$rootScope.row = row.entity
 				$rootScope.editRow = function() {
-					var returnvalue = confirm("Are you sure to update task " + row.entity.title);
-					if (returnvalue == true) {
+					swal({
+						title: "Are you sure to update " + row.entity.title,
+						text: "",
+						type: "warning",
+						showCancelButton: true,
+						confirmButtonClass: "btn-danger",
+						confirmButtonText: "Yes, do it!",
+						closeOnConfirm: false
+					  },
+					  function(){
 						Tasks.update($rootScope.formData._id, $rootScope.formData)
 							.then(
 								function(response) {
 									$scope.loading = false;
 									$scope.formData = {};
 									$scope.tasks = response.data; // assign our new list of tasks
+									swal("Updated!", row.entity.title + " updated.", "success");
 								},
 								function (error){
 									console.log(error, 'Cannot update task');
 								}
 							);
-					}
+					  });
+
 				};
 				editModal.open(row.entity);
 			};

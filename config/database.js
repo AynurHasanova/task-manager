@@ -21,9 +21,10 @@ var taskSchema = new mongoose.Schema({
     priority: {type: String, trim: true, default: "low"},
     created: {type:Date, default: Date.now},
     done: Boolean,
+    owner: {type: String, trim: true},
     users: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          type: String,
           ref: "User"
         }
     ]

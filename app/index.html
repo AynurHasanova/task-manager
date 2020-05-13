@@ -18,18 +18,17 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-   
+
+        
     <script src="assets/angular-ui-grid/ui-grid.js"></script>
+
+	<script src="assets/bower_components/bootstrap-sweetalert/dist/sweetalert.js"></script>
+	<script src="assets/bower_components/bootstrap-sweetalert/dist/sweetalert.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/bower_components/bootstrap-sweetalert/dist/sweetalert.css">
     <link rel="stylesheet" href="assets/angular-ui-grid/ui-grid.css" type="text/css">
     <link rel="stylesheet" href="main.css" type="text/css">
-   <!--  <link rel="stylesheet" href="footer.css" type="text/css"> -->
 
-
-	<!-- <script src="https://gitcdn.xyz/cdn/angular/bower-material/master/angular-material.js"></script> --> 
-
-    <!--   <link rel="stylesheet" href="https://gitcdn.xyz/cdn/angular/bower-material/master/angular-material.css">  -->
-
-	<!-- SCROLLS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> 
 	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -59,8 +58,8 @@
 			</span>
 			<span ng-show="currentUser">
 			    <a href="#!alltasks" class="btn btn-primary btn-sm" >All Tasks</a>
-				<a href="#!create" class="btn btn-primary btn-sm">Create Task</a>
 				<a href="#!mytasks" class="btn btn-primary btn-sm">My Tasks</a>
+				<a href="#!create" class="btn btn-primary btn-sm">Create Task</a>
 				<a href="#!logout" ng-click="logout()" class="btn btn-primary btn-sm">Logout</a>
 				<label class="btn btn-info btn-sm" >Logged in as {{currentUser.data.userName}}</label>
 			</span>
